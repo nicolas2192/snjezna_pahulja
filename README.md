@@ -59,11 +59,6 @@ START = 1 INCREMENT = 1 COMMENT = 'Add a comment here';
 
 
 
-
-
-
-
-
 S3 bucket for Snowflake course: https://uni-lab-files.s3.us-west-2.amazonaws.com/
 
 
@@ -73,4 +68,49 @@ Data Vault
 Dimension Model – Star Schema. Good for readings. Fact table surrounded by dimension tables.
 Data vault. Good for reading.
 
+
+
+Creating File Format CSV
+CREATE OR REPLACE FILE FORMAT database.schema.my_csv_file_format
+  type = csv
+  field_delimiter = '\t' // or comma , or semicolon ;
+  skip_header = 1
+  TRIM_SPACE = TRUE
+  ERROR_ON_COLUMN_COUNT_MISMATCH = FALSE // if there are more or less rows than expected
+  FIELD_OPTIONALLY_ENCLOSED_BY = '"'; // additional character for escaping special fields
+  
+Create File Format for JSON 
+CREATE FILE FORMAT LIBRARY_CARD_CATALOG.PUBLIC.JSON_FILE_FORMAT 
+TYPE = 'JSON' 
+COMPRESSION = 'AUTO' 
+ENABLE_OCTAL = FALSE
+ALLOW_DUPLICATE = FALSE
+STRIP_OUTER_ARRAY = TRUE
+STRIP_NULL_VALUES = FALSE
+IGNORE_UTF8_ERRORS = FALSE; 
+
+Copy data from window container into an actual table
+COPY INTO AUTHOR_INGEST_JSON
+FROM @like_a_window_into_an_s3_bucket
+FILES = ('author_with_header.json')
+FILE_FORMAT = (FORMAT_NAME = 'JSON_FILE_FORMAT');
+
+
+//Create File Format for XML Data
+CREATE FILE FORMAT LIBRARY_CARD_CATALOG.PUBLIC.XML_FILE_FORMAT 
+TYPE = 'XML' 
+STRIP_OUTER_ELEMENT = FALSE; 
+
+COPY INTO author_ingest_xml
+FROM @like_a_window_into_an_s3_bucket
+FILES = ('author_with_header.xml')
+FILE_FORMAT = (FORMAT_NAME = 'XML_FILE_FORMAT');
+
+
+Create or replace sequences, unique ids
+// Create a new sequence, this one will be a counter for the book table
+CREATE OR REPLACE SEQUENCE "LIBRARY_CARD_CATALOG"."PUBLIC"."SEQ_BOOK_UID" 
+START 1 
+INCREMENT 1 
+COMMENT = 'Use this to fill in the BOOK_UID everytime you add a row';
 
