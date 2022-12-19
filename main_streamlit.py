@@ -32,7 +32,7 @@ streamlit.write('The user entered ', fruit_choice)
 fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + "kiwi")
 
 # Turn JSON into df
-fruityvice_normalized = pandas.json_normalize(fruityvice_response.json())
+fruityvice_normalized = pd.json_normalize(fruityvice_response.json())
 # Print JSON df
 streamlit.dataframe(fruityvice_normalized)
 
